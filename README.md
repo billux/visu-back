@@ -118,9 +118,6 @@ can help you to find the appropriate values.
 After a last verification of the files, to run with docker, just type:
 
 ```sh
-# First time you download the app, or sometime to refresh the image
-docker-compose -f docker-compose.yml -f docker-compose-dev.yml pull # Call the docker compose pull command
-docker-compose -f docker-compose.yml -f docker-compose-dev.yml build # Should be launched once each time you want to start the stack
 docker-compose -f docker-compose.yml -f docker-compose-dev.yml up # Should be launched once each time you want to start the stack
 ```
 
@@ -133,13 +130,20 @@ Wait for the startup to finished, then, while keeping it running, go in an
 other shell and populate the database with next commands:
 
 ```sh
-$ docker-compose exec django /code/venv/bin/python /code/src/manage.py populatedata # Launch a shell inside django container
+$ docker-compose exec django /code/venv/bin/python /code/src/manage.py migrate # to migrate the database
+$ çdocker-compose exec django /code/venv/bin/python /code/src/manage.py populatedata # To load initial data
 ```
 
-To be able to connect you need to configure a password for a user. Execute:
+If you want some demo data, you can also execute:
 
 ```sh
-$ docker-compose exec django /code/venv/bin/python /code/src/manage.py changepassword <username>
+$ docker-compose exec django /code/venv/bin/python /code/src/manage.py populatedata -t # Test data
+```
+
+To be able to connect you need to configure a superuser. Execute:
+
+```sh
+$ docker-compose exec django /code/venv/bin/python /code/src/manage.py createsuperuser
 ```
 
 Your instance is now up and running.
@@ -204,11 +208,11 @@ docker-compose exec django bash
 ## Calling Django manage commands
 
 ```sh
-docker-compose  exec django /local/venv/bin/python /local/code/manage.py shell [options]
+docker-compose  exec django /local/venv/bin/python /code/src/manage.py shell [options]
 # For instance:
-# docker-compose exec django /local/venv/bin/python /local/code/manage.py shell migrate
-# docker-compose exec django /local/venv/bin/python /local/code/manage.py shell shell
-# docker-compose exec django /local/venv/bin/python /local/code/manage.py shell createsuperuser
+# docker-compose exec django /code/venv/bin/python /code/src/manage.py migrate
+# docker-compose exec django /code/venv/bin/python /code/src/manage.py shell
+# docker-compose exec django /code/venv/bin/python /code/src/manage.py createsuperuser
 # ...
 ```
 
